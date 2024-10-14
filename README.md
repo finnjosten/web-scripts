@@ -8,7 +8,7 @@ This script automates the setup of various web projects, including Laravel, Reac
   - Laravel
   - React
   - Docker
-  - Plain static sites
+  - Plain site (for example plain html or simple php site)
 - **GitHub Integration**: Clone repositories if a GitHub link is provided.
 - **Dynamic Directory Creation**: Automatically creates directories based on the project type and domain.
 - **Nginx Configuration**: Generates and sets up Nginx configurations for each project type.
@@ -23,12 +23,10 @@ This script automates the setup of various web projects, including Laravel, Reac
   - **Composer** (for Laravel)
   - **Node.js** and **npm** (for React)
   - **Git** (for cloning repositories)
-  - **Certbot** (for SSL)
   - **GitHub CLI** (`gh`) if you want to clone a private repository.
+  - **Certbot** (for SSL)
 
 ## Usage
-
-1. **Download the Script**:
    You can run the script directly from the GitHub repository using `curl` or `wget`:
 
    ```bash

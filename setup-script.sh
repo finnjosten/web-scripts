@@ -92,23 +92,18 @@ if [ -z "$skip_setup" ]; then
     case "$project_type" in
         laravel)
             if [ -n "$repo_link" ]; then
+
+                git clone "$repo_link" "$domain_dir"
+                cd "$domain_dir" || exit
+
                 if [[ "$use_as_template" == "yes" ]]; then
-                    # Clone the custom Laravel 11 template
-                    git clone "$repo_link" "$domain_dir"
-                    cd "$domain_dir" || exit
-    
                     # Remove the git history to make it a new repository
                     rm -rf .git
                     git init
                     git branch -m main
-                    # Install Laravel dependencies
-                    composer install
-                else
-                    # Install Laravel dependencies from GitHub
-                    git clone "$repo_link" "$domain_dir"
-                    cd "$domain_dir" || exit
-                    composer install
                 fi
+
+                composer install
 
                 if [ ! -f ".env" ]; then
                     echo -e "\e[31mYou will need to upload your .env file !!\e[0m"

@@ -44,6 +44,8 @@ else
     domain_dir="/var/www/$project_type/$domain"
 fi
 
+sudo chown -R www-data:www-data "$domain_dir"
+
 # Create the domain folder if it doesn't exist
 mkdir -p "$domain_dir"
 

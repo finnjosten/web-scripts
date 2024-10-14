@@ -19,7 +19,7 @@ This script automates the setup of various web projects, including Laravel, Reac
 
 - Ensure you have the following installed:
   - **Nginx**
-  - **PHP** (for Laravel and plain sites)
+  - **PHP**8.0 or higer (for Laravel and plain sites)
   - **Composer** (for Laravel)
   - **Node.js** and **npm** (for React)
   - **Git** (for cloning repositories)

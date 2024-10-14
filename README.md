@@ -35,3 +35,8 @@ This script automates the setup of various web projects, including Laravel, Reac
 
    # Using wget
    bash <(wget -qO- https://raw.githubusercontent.com/BlackSparowYT/web-setup-script/refs/heads/main/setup-script.sh)
+  ```
+
+## Flow chart
+here you can view the flow of the script, if the script errors and asks you to continue manually you can refer to this.
+

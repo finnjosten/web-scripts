@@ -263,7 +263,7 @@ if [ -z "$skip_setup" ]; then
             exit 1
             ;;
     esac
-
+fi
 
 # Create nginx config file
 nginx_config="/etc/nginx/sites-available/$domain.conf"
@@ -381,3 +381,5 @@ fi
 echo "Certbot SSL setup completed successfully."
 
 echo "Script completed successfully."
+
+# End of script

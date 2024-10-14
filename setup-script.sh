@@ -227,6 +227,7 @@ if [ -z "$skip_setup" ]; then
                     sleep 10
                 fi
             fi
+            ;;
 
         docker)
             if [ -n "$repo_link" ]; then

@@ -1,2 +1,39 @@
-# web-setup-script
-A script to easily setup a laravel, react, docker or custom site
+# Web Setup Script
+
+This script automates the setup of various web projects, including Laravel, React, Docker, and plain static sites. It handles directory creation, project initialization, and Nginx configuration, including SSL setup via Certbot.
+
+## Features
+
+- **Project Types Supported**:
+  - Laravel
+  - React
+  - Docker
+  - Plain static sites
+- **GitHub Integration**: Clone repositories if a GitHub link is provided.
+- **Dynamic Directory Creation**: Automatically creates directories based on the project type and domain.
+- **Nginx Configuration**: Generates and sets up Nginx configurations for each project type.
+- **SSL Setup**: Uses Certbot to set up SSL for your domain.
+- **File Existence Check**: Warns if files already exist in the target directory and offers options to keep or delete them.
+
+## Prerequisites
+
+- Ensure you have the following installed:
+  - **Nginx**
+  - **PHP** (for Laravel and plain sites)
+  - **Composer** (for Laravel)
+  - **Node.js** and **npm** (for React)
+  - **Git** (for cloning repositories)
+  - **Certbot** (for SSL)
+  - **GitHub CLI** (`gh`) if you want to clone a private repository.
+
+## Usage
+
+1. **Download the Script**:
+   You can run the script directly from the GitHub repository using `curl` or `wget`:
+
+   ```bash
+   # Using curl
+   bash <(curl -s https://raw.githubusercontent.com/BlackSparowYT/web-setup-script/refs/heads/main/setup-script.sh)
+
+   # Using wget
+   bash <(wget -qO- https://raw.githubusercontent.com/BlackSparowYT/web-setup-script/refs/heads/main/setup-script.sh)

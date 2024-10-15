@@ -8,15 +8,13 @@ ask_for_input() {
     eval "$var_name='$input'"
 }
 
-mkdir -p /var/www/laravel
-mkdir -p /var/www/react
-mkdir -p /var/www/docker
-mkdir -p /var/www/plain
+# Create necessary directories
+for dir in laravel react docker plain; do
+    mkdir -p "/var/www/$dir"
+done
 
-# Ask for domain
+# Ask for domain and project type
 ask_for_input "Enter the domain you want to use: " domain
-
-# Ask what to create: Laravel, React, Docker, or Plain
 ask_for_input "What do you want to create (laravel/react/docker/plain)? " project_type
 
 # Ask for GitHub repo link (optional)
@@ -44,10 +42,8 @@ else
     domain_dir="/var/www/$project_type/$domain"
 fi
 
-sudo chown -R www-data:www-data "$domain_dir"
-
-# Create the domain folder if it doesn't exist
 mkdir -p "$domain_dir"
+sudo chown -R www-data:www-data "$domain_dir"
 
 # Check if there are existing files in the directory
 if [ "$(ls -A "$domain_dir")" ]; then
@@ -68,7 +64,6 @@ if [ "$(ls -A "$domain_dir")" ]; then
     ask_for_input "Do you want to keep the existing files? (yes/no): " keep_files
 
     if [[ "$keep_files" == "no" || "$keep_files" == "n" ]]; then
-        # Prompt for confirmation before removing files
         ask_for_input "Are you sure you want to remove all files in $domain_dir? (yes/no): " confirm_remove
         if [[ "$confirm_remove" == "yes" || "$confirm_remove" == "y" ]]; then
             rm -r "$domain_dir/"
@@ -76,17 +71,14 @@ if [ "$(ls -A "$domain_dir")" ]; then
             mkdir -p "$domain_dir"
         else
             echo -e "\e[33mKeeping the existing files in $domain_dir.\e[0m"
-            # Skip the setup based on project type
             skip_setup=true
         fi
     else
         echo -e "\e[33mKeeping the existing files in $domain_dir.\e[0m"
-        # Skip the setup based on project type
         skip_setup=true
     fi
 fi
 
-# Navigate to the domain directory
 cd "$domain_dir" || exit
 
 # Set up based on project type if not skipping
@@ -94,17 +86,16 @@ if [ -z "$skip_setup" ]; then
     case "$project_type" in
         laravel)
             if [ -n "$repo_link" ]; then
-
                 git clone "$repo_link" "$domain_dir"
                 cd "$domain_dir" || exit
 
                 if [[ "$use_as_template" == "yes" ]]; then
-                    # Remove the git history to make it a new repository
                     rm -rf .git
                     git init
                     git branch -m main
                 fi
-
+                
+                echo "When asked to confirm running composer as root, type 'yes'."
                 composer install
 
                 if [ ! -f ".env" ]; then
@@ -118,17 +109,14 @@ if [ -z "$skip_setup" ]; then
                 php artisan storage:link
                 sudo chown -R www-data:www-data "$domain_dir"/storage "$domain_dir"/bootstrap/cache
             else
-                # Ask user to choose setup option
                 ask_for_input "No GitHub link provided. Choose setup option: (1) Plain Laravel, (2) Nothing: " setup_option
 
                 case "$setup_option" in
                     1)
-                        # Download default Laravel setup
                         composer create-project --prefer-dist laravel/laravel "$domain_dir"
                         cd "$domain_dir" || exit
                         git init
                         git branch -m main
-                        # Install Laravel dependencies from GitHub
                         composer install
 
                         if [ ! -f ".env" ]; then
@@ -142,7 +130,6 @@ if [ -z "$skip_setup" ]; then
                         php artisan storage:link
                         sudo chown -R www-data:www-data "$domain_dir"/storage "$domain_dir"/bootstrap/cache
                         ;;
-    
                     2)
                         echo -e "\e[33mYou have not provided a GitHub repo or chosen to set up a default installation, please manually upload the files and do the following:\e[0m"
                         echo -e "\e[33m1. Run 'composer install' to install the dependencies.\e[0m"
@@ -161,61 +148,34 @@ if [ -z "$skip_setup" ]; then
             ;;
 
         react)
-            # Ask if a GitHub repo link is provided
             if [ -n "$repo_link" ]; then
-                if [[ "$use_as_template" == "yes" ]]; then
-                    # Clone the React template from GitHub
-                    git clone "$repo_link" "$domain_dir"
-                    cd "$domain_dir" || exit
+                git clone "$repo_link" "$domain_dir"
+                cd "$domain_dir" || exit
 
-                    # Remove the git history to make it a new repository
+                if [[ "$use_as_template" == "yes" ]]; then
                     rm -rf .git
                     git init
                     git branch -m main
-                    
-                    # Install React dependencies
-                    npm install
-                    
-                    # Build the project
-                    npm run build
+                fi
 
-                    # Check if the 'dist' folder exists
-                    if [ ! -d "dist" ]; then
-                        echo -e "\e[31m'dist' folder not found. Build may have failed. Exiting.\e[0m"
-                        echo -e "\e[31mPlease check why the build fails and rerun the script or continue manually.\e[0m"
-                        exit 1
-                    fi
-                else
-                    # Clone the React project from GitHub
-                    git clone "$repo_link" "$domain_dir"
-                    cd "$domain_dir" || exit
-                    
-                    # Install React dependencies
-                    npm install
-                    
-                    # Build the project
-                    npm run build
+                npm install
+                npm run build
 
-                    # Check if the 'dist' folder exists
-                    if [ ! -d "dist" ]; then
-                        echo -e "\e[31m'dist' folder not found. Build may have failed. Exiting.\e[0m"
-                        echo -e "\e[31mPlease check why the build fails and rerun the script or continue manually.\e[0m"
-                        exit 1
-                    fi
+                if [ ! -d "dist" ]; then
+                    echo -e "\e[31m'dist' folder not found. Build may have failed. Exiting.\e[0m"
+                    echo -e "\e[31mPlease check why the build fails and rerun the script or continue manually.\e[0m"
+                    exit 1
                 fi
             else
-                # No GitHub link provided, ask if the user wants a boilerplate
                 ask_for_input "No GitHub link provided. Would you like to set up a default React installation? (yes/no): " setup_default
 
                 if [[ "$setup_default" == "yes" || "$setup_default" == "y" ]]; then
-                    # Download default React setup
                     npx create-react-app "$domain_dir"
                     cd "$domain_dir" || exit
-                    
-                    # Install dependencies and build
+
+                    npm install
                     npm run build
                     
-                    # Check if the 'dist' folder exists
                     if [ ! -d "dist" ]; then
                         echo -e "\e[31m'dist' folder not found. Build may have failed. Exiting.\e[0m"
                         echo -e "\e[31mPlease check why the build fails and rerun the script or continue manually.\e[0m"
@@ -233,16 +193,8 @@ if [ -z "$skip_setup" ]; then
 
         docker)
             if [ -n "$repo_link" ]; then
-                if [[ "$use_as_template" == "yes" ]]; then
-                    # Clone the Docker template
-                    git clone "$repo_link" "$domain_dir"
-                    cd "$domain_dir" || exit
-                    # Add any specific Docker setup commands if necessary
-                else
-                    # Install Docker dependencies from GitHub
-                    git clone "$repo_link" "$domain_dir"
-                    cd "$domain_dir" || exit
-                fi
+                git clone "$repo_link" "$domain_dir"
+                cd "$domain_dir" || exit
             else
                 echo -e "\e[31mPlease provide a GitHub link to set up Docker project.\e[0m"
                 exit 1
@@ -251,15 +203,11 @@ if [ -z "$skip_setup" ]; then
 
         plain)
             if [[ "$is_static" == "yes" ]]; then
-                # Setup static files if it's a static site
                 echo -e "\e[32mSetting up static site files in $domain_dir.\e[0m"
-                # Add commands to create or copy static files as necessary
             else
                 echo -e "\e[32mSetting up plain dynamic site files in $domain_dir.\e[0m"
-                # Add commands to create or copy dynamic files as necessary
             fi
             ;;
-
         *)
             echo -e "\e[31mInvalid project type selected. Exiting...\e[0m"
             exit 1
@@ -296,7 +244,6 @@ server {
 }
 EOL
         ;;
-    
     react)
         cat <<EOL > "$nginx_config"
 server {
@@ -312,7 +259,6 @@ server {
 }
 EOL
         ;;
-    
     docker)
         cat <<EOL > "$nginx_config"
 server {
@@ -329,7 +275,6 @@ server {
 }
 EOL
         ;;
-    
     plain)
         cat <<EOL > "$nginx_config"
 server {
@@ -383,5 +328,3 @@ fi
 echo "Certbot SSL setup completed successfully."
 
 echo "Script completed successfully."
-
-# End of script

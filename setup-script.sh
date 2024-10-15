@@ -140,7 +140,7 @@ if [ -z "$skip_setup" ]; then
                         sleep 10
                         ;;
                     *)
-                        echo -e "\e[31mInvalid option selected. Exiting...\e[0m"
+                        echo -e "\e[31mInvalid option selected. Exiting. ERROR 01.L.1\e[0m"
                         exit 1
                         ;;
                 esac

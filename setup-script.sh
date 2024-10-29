@@ -61,12 +61,14 @@ if [ "$(ls -A "$domain_dir")" ]; then
     fi
 
     # Ask whether to keep or remove the existing files
-    ask_for_input "Do you want to keep the existing files? (yes/no): " keep_files
+    echo "Do you want to keep the existing files?"
+    echo "If opt not to keep the files but the folder contains a .env we will save the .env for you."
+    ask_for_input  "(yes/no): " keep_files
 
     if [[ "$keep_files" == "no" || "$keep_files" == "n" ]]; then
         ask_for_input "Are you sure you want to remove all files in $domain_dir? (yes/no): " confirm_remove
         if [[ "$confirm_remove" == "yes" || "$confirm_remove" == "y" ]]; then
-            rm -r "$domain_dir/"
+            find "$domain_dir" -mindepth 1 ! -name '.env' -delete
             echo -e "\e[32mAll files have been removed from $domain_dir.\e[0m"
             mkdir -p "$domain_dir"
         else
@@ -86,8 +88,19 @@ if [ -z "$skip_setup" ]; then
     case "$project_type" in
         laravel)
             if [ -n "$repo_link" ]; then
+                if [ -f "$domain_dir/.env" ]; then
+                    cd /var/www/laravel || exit
+                    mv "$domain_dir/.env" "/var/www/laravel/${domain}.env"
+                    rm -rf "$domain_dir"
+                    mkdir -p "$domain_dir"
+                fi
+
                 git clone "$repo_link" "$domain_dir"
                 cd "$domain_dir" || exit
+
+                if [ -f "/var/www/laravel/${domain}.env" ]; then
+                    mv "/var/www/laravel/${domain}.env" "$domain_dir/.env"
+                fi
 
                 if [[ "$use_as_template" == "yes" ]]; then
                     rm -rf .git
@@ -140,7 +153,7 @@ if [ -z "$skip_setup" ]; then
                         sleep 10
                         ;;
                     *)
-                        echo -e "\e[31mInvalid option selected. Exiting. ERROR 01.L.1\e[0m"
+                        echo -e "\e[31mInvalid option selected. Exiting...\e[0m"
                         exit 1
                         ;;
                 esac

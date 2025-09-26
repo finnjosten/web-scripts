@@ -1,10 +1,20 @@
-# v1.0.5
+# v1.1.0
 
 # Check for test mode
 TEST_MODE=0
 if [[ "$1" == "--test" ]]; then
   TEST_MODE=1
   echo "Running in TEST MODE. All changes will be reverted at the end."
+fi
+
+PHP_VERSION=""
+if [[ "$1" == "--php" && -n "$2" ]]; then
+  PHP_VERSION="$2"
+elif [[ "$2" == "--php" && -n "$3" ]]; then
+  PHP_VERSION="$3"
+else
+  echo "Usage: $0 --php <PHP_VERSION> [--test]"
+  exit 1
 fi
 
 # Create a cleanup function for test mode

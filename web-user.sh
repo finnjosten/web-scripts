@@ -168,7 +168,7 @@ else
 # Once cerbot is good for domain {$domain} uncomment the following lines (search for: #-) and remove this comment then remove the last server block in the file
 #-server {
 #-    set \$env_dev 0;
-#-    server_name $domain www.$domain;
+#-    server_name $domain;
 #-    
 #-    root $wwwpath/httpdocs/;
 #-    index index.php;

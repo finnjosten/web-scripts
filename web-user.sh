@@ -290,7 +290,7 @@ php_admin_flag[display_errors] = off
 
 ; Set up logging
 php_admin_flag[log_errors] = on
-php_admin_value[error_log] = ${wwwpath}logs/php_error.log
+php_admin_value[error_log] = ${wwwpath}/logs/php_error.log
 
 ; Set resource limits
 php_admin_value[memory_limit] = 256M

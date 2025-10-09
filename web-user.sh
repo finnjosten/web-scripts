@@ -109,9 +109,9 @@ export HISTFILESIZE=10000
 # Ignore duplicate commands in history
 export HISTCONTROL=ignoreboth
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+export NVM_DIR="\$HOME/.nvm"
+[ -s "\$NVM_DIR/nvm.sh" ] && \. "\$NVM_DIR/nvm.sh"
+[ -s "\$NVM_DIR/bash_completion" ] && \. "\$NVM_DIR/bash_completion"
 
 httpdocs
 clear
@@ -120,7 +120,7 @@ EOF
 chown "$username:$username" .bashrc
 
 su - $username -c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash"
-su - $username -c "nvm install node && nvm use node && nvm alias default node"
+su - $username -c "nvm install --lts"
 
 # Setup /var/www/vhost/$username/www
 vhost_dir="$wwwpath"

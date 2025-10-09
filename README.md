@@ -1,5 +1,64 @@
 # Web Setup Script
 
+
+## Web user script
+
+Automatically create a webuser with a premade php FPM config and nginx site config for the site. Also add an directory for the website to be in (usually put in `/var/www/vhost/{domain}` but you can choice anywhere from `/var/www`)
+
+Best used as follows:
+- Create a folder in `/opt` (mine is `admin-scripts`)
+- Create a new script called `web-user.sh`
+- Paste this in it
+```BASH
+#!/bin/bash
+PHP_VERSION="8.4"
+
+TMP_SCRIPT=$(mktemp)
+curl -s -o "$TMP_SCRIPT" https://raw.githubusercontent.com/finnjosten/web-scripts/refs/heads/main/web-user.sh
+bash "$TMP_SCRIPT" --php "$PHP_VERSION"
+rm -f "$TMP_SCRIPT"
+```
+
+
+## Web user script groups
+
+Auto assign certain groups to all the users with .web-user in their home dir (this file is default added with the above script). User can be skipped by adding .web-user-ignore-groups
+
+Best used as follows:
+- Create a folder in `/opt` (mine is `admin-scripts`)
+- Create a new script called `web-user-groups.sh`
+- Paste this in it
+```BASH
+#!/bin/bash
+
+TMP_SCRIPT=$(mktemp)
+curl -s -o "$TMP_SCRIPT" https://raw.githubusercontent.com/finnjosten/web-scripts/refs/heads/main/web-user-groups.sh
+bash "$TMP_SCRIPT"
+rm -f "$TMP_SCRIPT"
+```
+
+
+## Web user script groups
+
+Auto set all the ssh keys to all the users with .web-user in their home dir (this file is default added with the above script). User can be skipped by adding .web-user-ignore-keys
+
+Best used as follows:
+- Create a folder in `/opt` (mine is `admin-scripts`)
+- Create a new script called `web-user-groups.sh`
+- Create a new file called `clone_keys` in the same folder the script, in here place all the ssh keys you need.
+- Paste this in it
+```BASH
+#!/bin/bash
+
+TMP_SCRIPT=$(mktemp)
+curl -s -o "$TMP_SCRIPT" https://raw.githubusercontent.com/finnjosten/web-scripts/refs/heads/main/web-user-keys.sh
+bash "$TMP_SCRIPT"
+rm -f "$TMP_SCRIPT"
+```
+
+
+## SETUP SCRIPT IS OUTDATED!!!!
+
 This script automates the setup of various web projects, including Laravel, React, Docker, and plain static sites. It handles directory creation, project initialization, and Nginx configuration, including SSL setup via Certbot.
 
 ## Features
